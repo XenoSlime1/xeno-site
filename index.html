@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XENO - Official Site</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="index.html" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="battleroyale.html">Battle Royale</a></li>
+      <!-- 今後ページ追加時はここにリンクを足す -->
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Hero ===== -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-icon">X</div>
+    <h1>XENO</h1>
+    <p class="subtitle">Minecraft企画 / プラグイン開発 / ゲームクリエイター</p>
+    <div class="hero-links">
+      <a href="https://discord.gg/KbKVsb4vrr" target="_blank" class="btn btn-discord">Discord — 是乃裁</a>
+      <a href="battleroyale.html" class="btn btn-primary">Battle Royale 企画</a>
+      <!-- 他のリンク（YouTube, X等）があれば追加 -->
+    </div>
+  </div>
+</div>
+
+<!-- ===== About ===== -->
+<section id="about">
+  <h2 class="section-title">About</h2>
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag">Profile</span>
+      <h3>是乃 / Xeno</h3>
+      <p>Minecraftを中心に企画・プラグイン開発を行っています。自作プラグイン「Synergy」でオリジナルのバトルロワイヤルを制作中。</p>
+    </div>
+    <div class="card">
+      <span class="card-tag">Discord</span>
+      <h3>是乃裁</h3>
+      <p>企画の告知・参加者募集・雑談などはDiscordサーバー「是乃裁」で行っています。お気軽にご参加ください！</p>
+      <a href="https://discord.gg/KbKVsb4vrr" target="_blank" class="btn btn-discord">サーバーに参加</a>
+    </div>
+    <div class="card">
+      <span class="card-tag">Development</span>
+      <h3>Synergy Plugin</h3>
+      <p>Minecraft 1.21.1対応の自作Javaプラグイン。ロール制バトルロワイヤルをプラグイン単体で実現。</p>
+      <a href="battleroyale.html" class="btn btn-outline">詳細を見る</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Projects ===== -->
+<section id="projects">
+  <h2 class="section-title">Projects</h2>
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag">企画</span>
+      <h3>Synergy Battle Royale</h3>
+      <p>3つのロール（Attacker / Defender / Supporter）を選び、チームで戦うMinecraftバトルロワイヤル。独自のスキルシステム搭載。</p>
+      <a href="battleroyale.html" class="btn btn-primary">ルール・詳細</a>
+    </div>
+    <!-- 企画が増えたらここにカードを追加 -->
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p>&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

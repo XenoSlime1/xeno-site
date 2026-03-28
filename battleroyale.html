@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle Royale — XENO</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="index.html" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="battleroyale.html" class="active">Battle Royale</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Page Hero ===== -->
+<div class="page-hero">
+  <h1>Synergy Battle Royale</h1>
+  <p>ロールを選べ。チームで生き残れ。</p>
+</div>
+
+<!-- ===== Rules ===== -->
+<div class="rules-container">
+
+  <!-- 概要 -->
+  <div class="rule-block">
+    <h2>// 概要</h2>
+    <ul>
+      <li>Minecraft 1.21.1 で行うチーム制バトルロワイヤル</li>
+      <li>自作プラグイン「Synergy」によるオリジナルシステム</li>
+      <li>1チーム最大3人で構成</li>
+      <li>3つのロールから自分の役割を選んで戦う</li>
+    </ul>
+  </div>
+
+  <!-- ロール紹介 -->
+  <div class="rule-block">
+    <h2>// ロール</h2>
+    <p style="color: var(--text-dim); margin-bottom: 1rem;">各チーム Attacker×2 / Defender×2 / Supporter×1 の枠から選択</p>
+    <div class="role-grid">
+      <div class="role-card attacker">
+        <div class="role-name">ATTACKER</div>
+        <div class="role-slots">最大2枠</div>
+        <p>攻撃特化のロール。高い火力で敵チームを殲滅する。</p>
+      </div>
+      <div class="role-card defender">
+        <div class="role-name">DEFENDER</div>
+        <div class="role-slots">最大2枠</div>
+        <p>防御・耐久のロール。チームを守り、前線を維持する。</p>
+      </div>
+      <div class="role-card supporter">
+        <div class="role-name">SUPPORTER</div>
+        <div class="role-slots">最大1枠</div>
+        <p>支援特化のロール。回復やバフでチームを支える。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本ルール -->
+  <div class="rule-block">
+    <h2>// 基本ルール</h2>
+    <ul>
+      <li>チーム全員がデス → そのチームは敗退</li>
+      <li>最後まで生存したチームが勝利</li>
+      <li>蘇生システムあり（条件付き）</li>
+      <li>各ロール固有のスキル・武器を使用可能</li>
+      <li>装備はロールごとに固定（自由な装備変更不可）</li>
+    </ul>
+  </div>
+
+  <!-- 参加方法 -->
+  <div class="rule-block">
+    <h2>// 参加方法</h2>
+    <ul>
+      <li>Discordサーバー「是乃裁」に参加</li>
+      <li>企画告知チャンネルで開催情報をチェック</li>
+      <li>参加表明して当日サーバーに接続！</li>
+    </ul>
+    <div style="margin-top: 1.5rem;">
+      <a href="https://discord.gg/KbKVsb4vrr" target="_blank" class="btn btn-discord">Discordに参加する</a>
+    </div>
+  </div>
+
+  <!-- 注意事項 -->
+  <div class="rule-block">
+    <h2>// 注意事項</h2>
+    <ul>
+      <li>チート・不正ツールの使用は即BAN</li>
+      <li>暴言・迷惑行為は禁止</li>
+      <li>ルールは随時更新される場合があります</li>
+      <li>不明点はDiscordで質問してください</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p><a href="index.html">&larr; トップに戻る</a></p>
+  <p>&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
