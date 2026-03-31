@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>是乃公式サイト - Home</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- OGP -->
+  <meta property="og:title" content="是乃公式サイト">
+  <meta property="og:description" content="イベントやイラスト、様々なことが掲載！">
+  <meta property="og:url" content="https://xenotadano.com/home">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Xeno Official">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="是乃公式サイト">
+  <meta name="twitter:description" content="イベントやイラスト、様々なことが掲載！">
+  <meta name="theme-color" content="#ff6a00">
+  <link rel="stylesheet" href="../css/style.css?v=20260331b">
+</head>
+<body>
+<div class="page-transition" id="page-transition"></div>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="/" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/home" class="active">Home</a></li>
+      <li><a href="/link">Link</a></li>
+      <li><a href="/live">Live</a></li>
+      <li><a href="/fanart">Fan Art</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Hero ===== -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-visual">
+      <div class="character-img protected-image fade-in-left">
+        <!-- ▼ 立ち絵画像（images/character.png を差し替えてください） -->
+        <img src="/images/%E6%9C%80%E5%88%9D%E3%81%AB%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B%E7%94%A8.PNG" alt="XENO" draggable="false">
+        <div class="image-shield"></div>
+      </div>
+      <div class="hero-text fade-in-right">
+        <h1>XENO</h1>
+        <!-- ▼ 自己紹介文（ここを編集） -->
+        <p class="subtitle" data-i18n="home.subtitle">Minecraft企画 / プラグイン開発 / ゲームクリエイター</p>
+      </div>
+    </div>
+  </div>
+  <div class="hero-glow-line"></div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ===== Profile ===== -->
+<section id="about">
+  <h2 class="section-title fade-in">Profile</h2>
+
+  <div class="profile-bio fade-in">
+    <p data-i18n="home.profile.bio">「モブといえばおれ」――そう言われる存在を目指して活動中のVTuberです。</p>
+  </div>
+
+  <div class="profile-grid stagger">
+    <div class="profile-card fade-in">
+      <span class="profile-card-label">Activity</span>
+      <div class="profile-card-body">
+        <ul class="profile-list">
+          <li data-i18n="home.activity.1">Minecraft MOD / 配布マップ</li>
+          <li data-i18n="home.activity.2">自作企画の開催</li>
+          <li data-i18n="home.activity.3">プラグイン開発</li>
+          <li data-i18n="home.activity.4">サムネ制作</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="profile-card fade-in">
+      <span class="profile-card-label">Target</span>
+      <div class="profile-card-body">
+        <p class="profile-goal" data-i18n="home.target.goal">チャンネル登録者 10,000 人</p>
+        <p class="profile-sub-now" id="sub-count" data-i18n="home.target.loading">現在表示はされません</p>
+      </div>
+    </div>
+
+    <div class="profile-card fade-in">
+      <span class="profile-card-label">Birthday</span>
+      <div class="profile-card-body">
+        <p class="profile-birthday">8<span class="profile-date-sep">/</span>26</p>
+      </div>
+    </div>
+
+    <div class="profile-card fade-in">
+      <span class="profile-card-label">Fan Name</span>
+      <div class="profile-card-body">
+        <p class="profile-fanname">是狐</p>
+        <p class="profile-fanname-reading" data-i18n="home.fanname.reading">こぎつね</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 衣装ギャラリー ===== -->
+<div class="section-divider"></div>
+
+<section id="gallery">
+  <h2 class="section-title fade-in">Gallery</h2>
+
+  <div class="costume-frame fade-in">
+    <button class="costume-arrow costume-prev" onclick="changeCostume(-1)" aria-label="前の衣装" data-i18n-aria="home.costume.prev">&#8249;</button>
+
+    <div class="costume-stage">
+      <div class="costume-slide" id="costume-slide">
+        <div class="costume-display">
+          <div class="costume-image protected-image">
+            <div class="img-skeleton" id="costume-skeleton">
+              <img id="costume-img" src="/images/%E6%98%AF%E4%B9%83%20%E3%83%A1%E3%82%A4%E3%83%B3%E8%A1%A3%E8%A3%85%20%E3%81%8A%E9%9D%A2%E6%A8%AA.png" alt="メイン衣装" draggable="false">
+            </div>
+            <div class="image-shield"></div>
+          </div>
+          <div class="expression-bubbles" id="expression-bubbles">
+            <div class="expression-bubble expression-bubble-1 protected-image">
+              <img src="/images/%E5%B7%AE%E5%88%861.png" alt="face1" draggable="false">
+              <div class="image-shield"></div>
+              <span class="expression-bubble-label">face1</span>
+            </div>
+            <div class="expression-bubble expression-bubble-2 protected-image">
+              <img src="/images/%E5%B7%AE%E5%88%862.png" alt="face2" draggable="false">
+              <div class="image-shield"></div>
+              <span class="expression-bubble-label">face2</span>
+            </div>
+            <div class="expression-bubble expression-bubble-3 protected-image">
+              <img src="/images/%E5%B7%AE%E5%88%863.png" alt="face3" draggable="false">
+              <div class="image-shield"></div>
+              <span class="expression-bubble-label">face3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="costume-arrow costume-next" onclick="changeCostume(1)" aria-label="次の衣装" data-i18n-aria="home.costume.next">&#8250;</button>
+  </div>
+
+  <h3 class="costume-name" id="costume-name" data-i18n="home.costume.main">メイン衣装</h3>
+  <div class="costume-toggle" id="costume-toggle">
+    <button class="costume-toggle-btn active" onclick="toggleVariant(0)" data-i18n="home.costume.mask_side">お面横</button>
+    <button class="costume-toggle-btn" onclick="toggleVariant(1)" data-i18n="home.costume.mask_on">お面装着</button>
+  </div>
+
+  <div class="costume-dots" id="costume-dots">
+    <span class="costume-dot active"></span>
+    <span class="costume-dot"></span>
+  </div>
+</section>
+
+<!-- ===== Back to Top & Scroll Progress ===== -->
+<button class="back-to-top" id="back-to-top" aria-label="トップに戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p data-i18n="footer.copyright">&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+<!-- ===== Scripts ===== -->
+<script src="/js/i18n.js"></script>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('.protected-image')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  // 登録者数を取得して表示
+  var WORKER_URL = 'https://youtube-proxy.xenolike1263.workers.dev';
+  var CHANNEL_ID = 'UCwg6KT50JCG1mluJoUr5Z6Q';
+
+  function animateCount(el, target) {
+    var duration = 1500;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var p = Math.min((ts - startTime) / duration, 1);
+      var ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+      el.textContent = Math.floor(ease * target).toLocaleString();
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = target.toLocaleString();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  var lastSubCount = 0;
+
+  async function fetchSubCount() {
+    try {
+      var res = await fetch(
+        WORKER_URL + '/yt/channels?part=statistics&id=' + CHANNEL_ID
+      );
+      if (!res.ok) return;
+      var data = await res.json();
+      if (!data.items || data.items.length === 0) return;
+      var count = parseInt(data.items[0].statistics.subscriberCount, 10);
+      if (count === lastSubCount) return;
+      var el = document.getElementById('sub-count');
+      el.removeAttribute('data-i18n');
+      el.style.fontFamily = "'Orbitron', sans-serif";
+      el.style.fontSize = '3rem';
+      el.style.fontWeight = '900';
+      el.style.color = 'var(--text)';
+      el.style.letterSpacing = '2px';
+      animateCount(el, count);
+      lastSubCount = count;
+      if (count >= 10000) {
+        setTimeout(function() { el.classList.add('achieved'); }, 1600);
+      }
+    } catch(e) {}
+  }
+
+  fetchSubCount();
+  setInterval(fetchSubCount, 120000); // 2分ごと更新
+
+  // ===== Image Skeleton Helper =====
+  function initSkeleton(imgEl, skeletonEl) {
+    if (imgEl.complete && imgEl.naturalHeight > 0) {
+      skeletonEl.classList.add('loaded');
+    } else {
+      imgEl.addEventListener('load', function() {
+        skeletonEl.classList.add('loaded');
+      }, { once: true });
+    }
+  }
+
+  // Init skeleton for first costume image
+  var costumeImg = document.getElementById('costume-img');
+  var costumeSkeleton = document.getElementById('costume-skeleton');
+  initSkeleton(costumeImg, costumeSkeleton);
+
+  // ===== Costume Gallery =====
+  var costumes = [
+    {
+      nameKey: 'home.costume.main',
+      variants: [
+        { src: '/images/是乃 メイン衣装 お面横.png', labelKey: 'home.costume.mask_side' },
+        { src: '/images/是乃 メイン衣装 お面装着.png', labelKey: 'home.costume.mask_on' }
+      ],
+      expressions: [
+        { src: '/images/差分1.png', label: 'face1' },
+        { src: '/images/差分2.png', label: 'face2' },
+        { src: '/images/差分3.png', label: 'face3' }
+      ]
+    },
+    {
+      nameKey: 'home.costume.unrevealed',
+      variants: [
+        { src: '/images/未公開.png', labelKey: '' }
+      ],
+      expressions: [],
+      small: true
+    }
+  ];
+
+  var currentCostume = 0;
+  var currentVariant = 0;
+  var costumeAnimating = false;
+
+  function changeCostume(dir) {
+    if (costumeAnimating) return;
+    costumeAnimating = true;
+
+    var slide = document.getElementById('costume-slide');
+    var outClass = dir > 0 ? 'slide-out-left' : 'slide-out-right';
+    var inClass = dir > 0 ? 'slide-in-right' : 'slide-in-left';
+
+    slide.classList.add(outClass);
+
+    setTimeout(function() {
+      currentCostume = (currentCostume + dir + costumes.length) % costumes.length;
+      currentVariant = 0;
+      updateCostume();
+      slide.classList.remove(outClass);
+      slide.classList.add(inClass);
+
+      setTimeout(function() {
+        slide.classList.remove(inClass);
+        costumeAnimating = false;
+      }, 400);
+    }, 400);
+  }
+
+  function toggleVariant(idx) {
+    if (idx === currentVariant) return;
+    currentVariant = idx;
+    var img = document.getElementById('costume-img');
+    var skeleton = document.getElementById('costume-skeleton');
+    skeleton.classList.remove('loaded');
+    img.style.opacity = '0';
+    setTimeout(function() {
+      img.src = costumes[currentCostume].variants[currentVariant].src;
+      initSkeleton(img, skeleton);
+      img.style.opacity = '1';
+    }, 200);
+    updateToggleButtons();
+  }
+
+  function updateToggleButtons() {
+    var btns = document.querySelectorAll('.costume-toggle-btn');
+    btns.forEach(function(btn, i) {
+      btn.classList.toggle('active', i === currentVariant);
+    });
+  }
+
+  function updateCostume() {
+    var costume = costumes[currentCostume];
+    var img = document.getElementById('costume-img');
+    var skeleton = document.getElementById('costume-skeleton');
+    skeleton.classList.remove('loaded');
+    img.src = costume.variants[0].src;
+    initSkeleton(img, skeleton);
+    img.style.maxHeight = costume.small ? '400px' : '';
+    document.getElementById('costume-name').textContent = t(costume.nameKey);
+
+    // Toggle buttons
+    var toggle = document.getElementById('costume-toggle');
+    if (costume.variants.length > 1) {
+      toggle.style.display = 'flex';
+      toggle.innerHTML = costume.variants.map(function(v, i) {
+        return '<button class="costume-toggle-btn' + (i === 0 ? ' active' : '') + '" onclick="toggleVariant(' + i + ')">' + t(v.labelKey) + '</button>';
+      }).join('');
+    } else {
+      toggle.style.display = 'none';
+    }
+
+    // Dots
+    var dots = document.getElementById('costume-dots');
+    dots.innerHTML = costumes.map(function(_, i) {
+      return '<span class="costume-dot' + (i === currentCostume ? ' active' : '') + '"></span>';
+    }).join('');
+
+    // Expression bubbles
+    var bubbles = document.getElementById('expression-bubbles');
+    if (costume.expressions.length > 0) {
+      bubbles.innerHTML = costume.expressions.map(function(ex, i) {
+        return '<div class="expression-bubble expression-bubble-' + (i + 1) + ' protected-image">' +
+          '<img src="' + ex.src + '" alt="' + ex.label + '" draggable="false">' +
+          '<div class="image-shield"></div>' +
+          '<span class="expression-bubble-label">' + ex.label + '</span>' +
+        '</div>';
+      }).join('');
+    } else {
+      bubbles.innerHTML = '';
+    }
+  }
+
+  // ===== Scroll Animations =====
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ===== Header shadow + Back to Top + Scroll Progress =====
+  var backToTop = document.getElementById('back-to-top');
+  var scrollProgress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 10);
+
+    // Back to top visibility
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+
+    // Scroll progress bar
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = percent + '%';
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Page Transition =====
+  document.querySelectorAll('a[href^="/"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var href = this.getAttribute('href');
+      if (href === window.location.pathname) return;
+      e.preventDefault();
+      var overlay = document.getElementById('page-transition');
+      overlay.classList.add('active');
+      setTimeout(function() { window.location.href = href; }, 300);
+    });
+  });
+</script>
+
+</body>
+</html>

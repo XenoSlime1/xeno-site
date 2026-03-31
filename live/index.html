@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>是乃公式サイト - Live</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- OGP -->
+  <meta property="og:title" content="Live">
+  <meta property="og:description" content="配信情報・スケジュール・おすすめ動画">
+  <meta property="og:url" content="https://xenotadano.com/live">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Xeno Official">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Live">
+  <meta name="twitter:description" content="配信情報・スケジュール・おすすめ動画">
+  <meta name="theme-color" content="#ff6a00">
+  <link rel="stylesheet" href="../css/style.css?v=20260331b">
+</head>
+<body>
+<div class="page-transition" id="page-transition"></div>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="/" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/link">Link</a></li>
+      <li><a href="/live" class="active">Live</a></li>
+      <li><a href="/fanart">Fan Art</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Live Page ===== -->
+<section class="live-page">
+  <h1 class="page-title fade-in">Live</h1>
+
+  <!-- 配信中 -->
+  <div class="live-section fade-in">
+    <h2 class="live-section-title">
+      <span class="live-dot"></span>
+      <span data-i18n="live.now">Now Streaming</span>
+    </h2>
+    <div id="live-now" class="live-content live-featured">
+      <p class="live-empty" data-i18n="live.now.empty">現在配信はありません</p>
+    </div>
+  </div>
+
+  <!-- 予約配信 -->
+  <div class="live-section fade-in">
+    <h2 class="live-section-title" data-i18n="live.upcoming">Upcoming</h2>
+    <div id="live-upcoming" class="live-content live-featured">
+      <p class="live-empty" data-i18n="live.upcoming.empty">予約配信はありません</p>
+    </div>
+  </div>
+
+  <!-- おすすめ -->
+  <div class="live-section fade-in">
+    <h2 class="live-section-title" data-i18n="live.recommend">Recommend</h2>
+    <div id="live-recommend" class="video-row">
+      <p class="live-empty" data-i18n="live.recommend.empty">現在表示はされません</p>
+    </div>
+  </div>
+
+  <!-- スケジュール -->
+  <div class="live-section fade-in">
+    <h2 class="live-section-title" data-i18n="live.schedule">Schedule</h2>
+
+    <!-- 月ナビ -->
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="prev-month">&lt;</button>
+      <span class="cal-nav-label" id="month-label"></span>
+      <button class="cal-nav-btn" id="next-month">&gt;</button>
+    </div>
+
+    <!-- カレンダー -->
+    <style>
+      .cal-nav{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:2rem}
+      .cal-nav-btn{background:none;border:2px solid var(--orange);color:var(--orange);width:36px;height:36px;border-radius:50%;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+      .cal-nav-btn:hover{background:var(--orange);color:#fff}
+      .cal-nav-label{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);min-width:180px;text-align:center}
+      .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%}
+      .cal-header{text-align:center;font-family:'Orbitron',sans-serif;font-size:.75rem;font-weight:700;color:var(--text-dim);padding:.5rem 0;letter-spacing:1px}
+      .cal-day{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;min-height:90px;padding:.4rem;transition:border-color .3s;min-width:0;overflow:hidden}
+      .cal-day:hover{border-color:rgba(255,106,0,.3)}
+      .cal-day-empty{background:transparent;border:none;min-height:0}
+      .cal-day-today{border-color:var(--orange);box-shadow:0 0 8px rgba(255,106,0,.15)}
+      .cal-day-num{display:block;font-size:.8rem;font-weight:700;color:var(--text-dim);margin-bottom:.3rem}
+      .cal-day-today .cal-day-num{color:var(--orange)}
+      .cal-event{font-size:.7rem;padding:.2rem .4rem;border-radius:4px;margin-bottom:2px;background:rgba(255,106,0,.1);color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-left:3px solid var(--orange)}
+      .cal-event-time{font-weight:700;color:var(--orange)}
+      .cal-event.tag-動画投稿{border-left-color:#43a047;background:rgba(67,160,71,.1)}
+      .cal-event.tag-歌投稿{border-left-color:#e53935;background:rgba(229,57,53,.1)}
+      .cal-event.tag-ショート投稿{border-left-color:#ff9800;background:rgba(255,152,0,.1)}
+      .cal-event.tag-ライブ配信{border-left-color:#9c27b0;background:rgba(156,39,176,.1)}
+      .cal-event.tag-コラボ配信{border-left-color:#5865F2;background:rgba(88,101,242,.1)}
+      .cal-event.tag-よぜらじ配信{border-left-color:#00bcd4;background:rgba(0,188,212,.1)}
+      .admin-bar{display:flex;gap:1rem;justify-content:center;margin-top:2rem}
+      .admin-login{text-align:center;margin-top:2rem}
+      #login-form{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+      .admin-input{padding:.6rem 1rem;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:'Noto Sans JP',sans-serif;background:var(--bg-card);color:var(--text);outline:none;transition:border-color .3s}
+      .admin-input:focus{border-color:var(--orange)}
+      .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
+      .modal-content{background:var(--bg-card);border-radius:16px;padding:2rem;width:90%;max-width:560px;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+      .modal-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;color:var(--orange);margin-bottom:1.5rem}
+      .modal-label{display:block;font-size:.8rem;font-weight:700;color:var(--text-dim);margin-bottom:.3rem;margin-top:.8rem}
+      .modal-content .admin-input{width:100%}
+      .modal-actions{display:flex;gap:.8rem;margin-top:1.5rem}
+      .btn-danger{background:#e53935;color:#fff}
+      .btn-danger:hover{background:#c62828;transform:translateY(-2px)}
+      .btn-sm{font-size:.8rem;padding:.4rem 1rem}
+      .collab-row{display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center}
+      .collab-row input{flex:1}
+      .collab-remove{background:none;border:none;color:#e53935;font-size:1.2rem;cursor:pointer;padding:0 .3rem}
+      #collab-area{margin-top:.5rem}
+      #add-collab-btn{margin-top:.5rem}
+      .detail-content{max-width:600px}
+      .detail-layout{display:flex;flex-direction:column;gap:1.2rem}
+      .detail-thumb{width:100%;border-radius:12px;overflow:hidden}
+      .detail-thumb img{width:100%;height:auto;display:block}
+      .detail-thumb-empty{width:100%;height:200px;background:var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.9rem}
+      .detail-info{flex:1}
+      .detail-title{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:.5rem}
+      .detail-date{font-size:.9rem;color:var(--text-dim);margin-bottom:.4rem}
+      .detail-tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:12px;background:rgba(255,106,0,.1);color:var(--orange);margin-bottom:.6rem}
+      .detail-memo{font-size:.95rem;color:var(--text-dim);margin-bottom:1rem;line-height:1.6}
+      .detail-collabs{margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--border)}
+      .detail-collab{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+      .detail-collab-name{font-size:.95rem;font-weight:600}
+      .detail-collab a{color:#1DA1F2;text-decoration:none;font-size:.85rem}
+      .detail-collab a:hover{text-decoration:underline}
+      @media(max-width:768px){
+        .cal-day{min-height:50px;padding:.2rem}
+        .cal-day-num{font-size:.65rem}
+        .cal-event{font-size:.55rem;padding:.1rem .2rem;border-left-width:2px}
+        .cal-event-time{display:none}
+        .cal-nav-label{font-size:1rem;min-width:140px}
+        .modal-content{width:95%;padding:1.5rem}
+        .detail-content{max-width:95%}
+        .detail-title{font-size:1.1rem}
+        .collab-row{flex-wrap:wrap}
+      }
+    </style>
+    <div class="cal-grid" id="cal-grid"></div>
+
+    <!-- 管理パネル（ログイン後に表示） -->
+    <div id="admin-area" style="display:none;">
+      <div class="admin-bar">
+        <button class="btn btn-primary" id="add-btn" data-i18n="live.admin.add">予定を追加</button>
+        <button class="btn btn-outline" id="logout-btn" data-i18n="live.admin.logout">ログアウト</button>
+      </div>
+    </div>
+
+    <!-- ログインフォーム（?admin でのみ表示） -->
+    <div id="login-area" class="admin-login" style="display:none;">
+      <div id="login-form">
+        <input type="password" id="login-pass" class="admin-input" placeholder="パスワード" data-i18n-placeholder="live.admin.password">
+        <button class="btn btn-primary" id="login-btn" data-i18n="live.admin.login">ログイン</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== モーダル ===== -->
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal-content">
+    <h3 class="modal-title" id="modal-title" data-i18n="live.admin.add">予定を追加</h3>
+    <label class="modal-label" data-i18n="live.admin.date">日付</label>
+    <input type="date" id="evt-date" class="admin-input">
+    <label class="modal-label" data-i18n="live.admin.time">時間</label>
+    <input type="time" id="evt-time" class="admin-input">
+    <label class="modal-label" data-i18n="live.admin.title_label">タイトル</label>
+    <input type="text" id="evt-title" class="admin-input" placeholder="日付を選ぶと自動入力されます" data-i18n-placeholder="live.admin.title_placeholder">
+    <label class="modal-label">URL</label>
+    <input type="text" id="evt-url" class="admin-input" placeholder="https://youtube.com/..." data-i18n-placeholder="live.admin.url_placeholder">
+    <label class="modal-label" data-i18n="live.admin.tag">タグ</label>
+    <select id="evt-tag" class="admin-input">
+      <option value="" disabled selected data-i18n="live.admin.tag_select">タグを選択</option>
+      <option value="動画投稿" data-i18n="live.admin.tag.video">動画投稿</option>
+      <option value="歌投稿" data-i18n="live.admin.tag.song">歌投稿</option>
+      <option value="ショート投稿" data-i18n="live.admin.tag.short">ショート投稿</option>
+      <option value="ライブ配信" data-i18n="live.admin.tag.live">ライブ配信</option>
+      <option value="コラボ配信" data-i18n="live.admin.tag.collab">コラボ配信</option>
+      <option value="よぜらじ配信" data-i18n="live.admin.tag.yozeraji">よぜらじ配信</option>
+    </select>
+    <label class="modal-label" data-i18n="live.admin.memo">メモ</label>
+    <input type="text" id="evt-memo" class="admin-input" placeholder="一言メモ（任意）" data-i18n-placeholder="live.admin.memo_placeholder">
+    <!-- コラボ相手（タグがコラボのとき表示） -->
+    <div id="collab-area" style="display:none;">
+      <label class="modal-label" data-i18n="live.admin.collab">コラボ相手</label>
+      <div id="collab-list"></div>
+      <button type="button" class="btn btn-outline btn-sm" id="add-collab-btn" data-i18n="live.admin.collab_add">+ 相手を追加</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="save-btn" data-i18n="live.admin.save">保存</button>
+      <button class="btn btn-outline" id="cancel-btn" data-i18n="live.admin.cancel">キャンセル</button>
+      <button class="btn btn-danger" id="delete-btn" style="display:none;" data-i18n="live.admin.delete">削除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 詳細ポップアップ ===== -->
+<div class="modal-overlay" id="detail-modal" style="display:none;">
+  <div class="modal-content detail-content">
+    <div class="detail-layout">
+      <div class="detail-thumb" id="detail-thumb"></div>
+      <div class="detail-info">
+        <h3 class="detail-title" id="detail-title"></h3>
+        <p class="detail-date" id="detail-date"></p>
+        <p class="detail-tag" id="detail-tag"></p>
+        <p class="detail-memo" id="detail-memo"></p>
+        <a class="btn btn-primary btn-sm" id="detail-url" href="#" target="_blank" style="display:none;" data-i18n="live.watch">配信を見る</a>
+        <div id="detail-collabs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 削除確認モーダル ===== -->
+<div class="modal-overlay" id="delete-modal" style="display:none;">
+  <div class="modal-content" style="max-width:400px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:1rem;">⚠️</div>
+    <h3 class="modal-title" style="margin-bottom:.5rem;" data-i18n="live.admin.delete_title">予定を削除</h3>
+    <p id="delete-confirm-title" style="font-size:.95rem;color:var(--text);margin-bottom:.3rem;font-weight:700;"></p>
+    <p id="delete-confirm-date" style="font-size:.85rem;color:var(--text-dim);margin-bottom:1.5rem;"></p>
+    <p style="font-size:.85rem;color:var(--text-dim);margin-bottom:1.5rem;" data-i18n="live.admin.delete_confirm">この操作は取り消せません</p>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn btn-danger" id="delete-confirm-btn" data-i18n="live.admin.delete_btn">削除する</button>
+      <button class="btn btn-outline" id="delete-cancel-btn" data-i18n="live.admin.cancel">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Back to Top & Scroll Progress ===== -->
+<button class="back-to-top" id="back-to-top" aria-label="トップに戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p data-i18n="footer.copyright">&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+<!-- ===== Scripts ===== -->
+<script src="/js/i18n.js"></script>
+<script>
+  // ===== 設定 =====
+  // Cloudflare Worker のURL（デプロイ後に書き換えてください）
+  const WORKER_URL = 'https://youtube-proxy.xenolike1263.workers.dev';
+  const CHANNEL_ID = 'UCwg6KT50JCG1mluJoUr5Z6Q';
+  const UPLOADS_PLAYLIST = 'UUwg6KT50JCG1mluJoUr5Z6Q';
+
+  // Worker経由でYouTube APIを呼ぶ
+  function ytApi(endpoint, params) {
+    var query = new URLSearchParams(params).toString();
+    return fetch(WORKER_URL + '/yt/' + endpoint + '?' + query);
+  }
+
+  // 動画カードのHTMLを生成
+  function videoCard(video, isLive, showDate) {
+    var id = video.id.videoId || video.id || (video.snippet.resourceId && video.snippet.resourceId.videoId);
+    var snippet = video.snippet;
+    var thumb = snippet.thumbnails.medium || snippet.thumbnails.default;
+    var title = snippet.title;
+    var url = 'https://www.youtube.com/watch?v=' + id;
+
+    var liveLabel = '';
+    if (isLive) {
+      liveLabel = '<span class="video-live-badge">LIVE</span>';
+    }
+
+    var dateLabel = '';
+    if (showDate && video.scheduledStart) {
+      var d = new Date(video.scheduledStart);
+      var year = d.getFullYear();
+      var month = ('0' + (d.getMonth() + 1)).slice(-2);
+      var day = ('0' + d.getDate()).slice(-2);
+      var hours = ('0' + d.getHours()).slice(-2);
+      var mins = ('0' + d.getMinutes()).slice(-2);
+      dateLabel = '<p class="video-date">' + year + '/' + month + '/' + day + ' ' + hours + ':' + mins + '〜</p>';
+    }
+
+    return '<a href="' + url + '" target="_blank" class="video-card">' +
+      '<div class="video-thumb">' +
+        '<img src="' + thumb.url + '" alt="' + title.replace(/"/g, '&quot;') + '">' +
+        liveLabel +
+      '</div>' +
+      '<p class="video-title">' + title + '</p>' +
+      dateLabel +
+    '</a>';
+  }
+
+  // 配信中のIDを記録
+  var liveVideoIds = [];
+
+  // 配信中を取得 (search.list: 100ユニット、Workerキャッシュ2分)
+  async function fetchLive() {
+    try {
+      var res = await ytApi('search', {
+        part: 'snippet',
+        channelId: CHANNEL_ID,
+        eventType: 'live',
+        type: 'video'
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+      var container = document.getElementById('live-now');
+      if (data.items && data.items.length > 0) {
+        liveVideoIds = data.items.map(function(v) { return v.id.videoId; });
+        container.innerHTML = data.items.map(function(v) { return videoCard(v, true); }).join('');
+      } else {
+        liveVideoIds = [];
+        container.innerHTML = '<p class="live-empty">' + t('live.now.empty') + '</p>';
+      }
+    } catch(e) { /* 失敗時は現在の表示を維持 */ }
+  }
+
+  // 予約配信を取得 (search.list: 100ユニット、Workerキャッシュ15分)
+  // ytUpcomingCache も同時に更新（fetchYtUpcomingの重複呼び出しを廃止）
+  async function fetchUpcoming() {
+    try {
+      var res = await ytApi('search', {
+        part: 'snippet',
+        channelId: CHANNEL_ID,
+        eventType: 'upcoming',
+        type: 'video'
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+      var container = document.getElementById('live-upcoming');
+      if (data.items && data.items.length > 0) {
+        var filtered = data.items.filter(function(v) {
+          return liveVideoIds.indexOf(v.id.videoId) === -1;
+        });
+        if (filtered.length > 0) {
+          var videoIds = filtered.map(function(v) { return v.id.videoId; }).join(',');
+          var detailRes = await ytApi('videos', {
+            part: 'liveStreamingDetails,snippet',
+            id: videoIds
+          });
+          if (detailRes.ok) {
+            var detailData = await detailRes.json();
+            if (detailData.items) {
+              // Upcomingカード用にscheduledStartを設定
+              detailData.items.forEach(function(d) {
+                filtered.forEach(function(v) {
+                  if (v.id.videoId === d.id && d.liveStreamingDetails) {
+                    v.scheduledStart = d.liveStreamingDetails.scheduledStartTime;
+                  }
+                });
+              });
+              // スケジュール自動入力用のキャッシュも更新
+              ytUpcomingCache = detailData.items.map(function(v) {
+                var start = v.liveStreamingDetails && v.liveStreamingDetails.scheduledStartTime;
+                var d = start ? new Date(start) : null;
+                return {
+                  title: v.snippet.title,
+                  date: d ? d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') : '',
+                  time: d ? String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') : '',
+                  url: 'https://www.youtube.com/watch?v=' + v.id
+                };
+              });
+            }
+          }
+          container.innerHTML = filtered.map(function(v) { return videoCard(v, false, true); }).join('');
+        } else {
+          ytUpcomingCache = [];
+          container.innerHTML = '<p class="live-empty">' + t('live.upcoming.empty') + '</p>';
+        }
+      } else {
+        ytUpcomingCache = [];
+        container.innerHTML = '<p class="live-empty">' + t('live.upcoming.empty') + '</p>';
+      }
+    } catch(e) { /* 失敗時は現在の表示を維持 */ }
+  }
+
+  // おすすめ: playlistItems.list (1ユニット、KVキャッシュで消費最小)
+  async function fetchRecommend() {
+    try {
+      var res = await ytApi('playlistItems', {
+        part: 'snippet',
+        playlistId: UPLOADS_PLAYLIST,
+        maxResults: 20
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+      var container = document.getElementById('live-recommend');
+      if (data.items && data.items.length > 0) {
+        var shuffled = data.items.sort(function() { return 0.5 - Math.random(); });
+        var picked = shuffled.slice(0, 10);
+        container.innerHTML = picked.map(function(v) { return videoCard(v, false); }).join('');
+      } else {
+        container.innerHTML = '<p class="live-empty">' + t('live.recommend.empty') + '</p>';
+      }
+    } catch(e) {
+      document.getElementById('live-recommend').innerHTML = '<p class="live-empty">現在表示はされません</p>';
+    }
+  }
+
+  // ===== YouTube予約配信のキャッシュ（fetchUpcomingで更新） =====
+  var ytUpcomingCache = [];
+
+  function findYtStreamByDate(date) {
+    return ytUpcomingCache.find(function(s) { return s.date === date; });
+  }
+
+  // ===== スケジュール =====
+  var calToken = sessionStorage.getItem('admin_token');
+  var calYear, calMonth;
+  var calEvents = [];
+  var editingId = null;
+  var isAdminMode = new URLSearchParams(location.search).has('admin');
+
+  function initSchedule() {
+    var now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    updateAdminUI();
+    loadMonth();
+
+    document.getElementById('prev-month').onclick = function() { changeMonth(-1); };
+    document.getElementById('next-month').onclick = function() { changeMonth(1); };
+    document.getElementById('login-btn').onclick = doLogin;
+    document.getElementById('login-pass').onkeydown = function(e) { if (e.key === 'Enter') doLogin(); };
+    document.getElementById('logout-btn').onclick = doLogout;
+    document.getElementById('add-btn').onclick = function() { openModal(); };
+    document.getElementById('save-btn').onclick = saveEvent;
+    document.getElementById('cancel-btn').onclick = closeModal;
+    document.getElementById('delete-btn').onclick = showDeleteConfirm;
+    document.getElementById('delete-cancel-btn').onclick = function() { document.getElementById('delete-modal').style.display = 'none'; };
+    document.getElementById('delete-confirm-btn').onclick = deleteEvent;
+    document.getElementById('modal').onclick = function(e) { if (e.target === this) closeModal(); };
+    document.getElementById('detail-modal').onclick = function(e) { if (e.target === this) this.style.display = 'none'; };
+    document.getElementById('delete-modal').onclick = function(e) { if (e.target === this) this.style.display = 'none'; };
+    document.getElementById('add-collab-btn').onclick = addCollabRow;
+    document.getElementById('evt-tag').onchange = function() {
+      var tag = this.value;
+      var area = document.getElementById('collab-area');
+      if (tag === 'よぜらじ配信' || tag === 'コラボ配信') {
+        area.style.display = 'block';
+      } else {
+        area.style.display = 'none';
+      }
+    };
+
+    // タイトルからYouTube動画を自動検索してURLを埋める
+    document.getElementById('evt-title').addEventListener('blur', async function() {
+      var title = this.value.trim();
+      var urlField = document.getElementById('evt-url');
+      if (!title || urlField.value) return;
+      // まず日付キャッシュから
+      var dateVal = document.getElementById('evt-date').value;
+      if (dateVal) {
+        var ytMatch = findYtStreamByDate(dateVal);
+        if (ytMatch && ytMatch.url) { urlField.value = ytMatch.url; return; }
+      }
+      // なければYouTube検索
+      try {
+        var searchQ = title.split(/[\/|]/)[0].replace(/[^\w\s\u3000-\u9FFF\u30A0-\u30FF\u3040-\u309F]/g, ' ').trim().slice(0, 50);
+        var res = await ytApi('search', {
+          part: 'snippet', channelId: CHANNEL_ID, q: searchQ || title, type: 'video', maxResults: 1
+        });
+        if (!res.ok) return;
+        var data = await res.json();
+        if (data.items && data.items.length > 0) {
+          urlField.value = 'https://www.youtube.com/watch?v=' + data.items[0].id.videoId;
+        }
+      } catch(e) {}
+    });
+  }
+
+  function changeMonth(delta) {
+    calMonth += delta;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    loadMonth();
+  }
+
+  async function loadMonth() {
+    var m = String(calMonth + 1).padStart(2, '0');
+    var key = calYear + '-' + m;
+    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('month-label').textContent = getLang() === 'en' ? monthNames[calMonth] + ' ' + calYear : calYear + '年 ' + (calMonth + 1) + '月';
+    try {
+      var res = await fetch(WORKER_URL + '/schedule?month=' + key);
+      calEvents = res.ok ? await res.json() : [];
+    } catch(e) { calEvents = []; }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    var firstDay = new Date(calYear, calMonth, 1).getDay();
+    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    var today = new Date();
+    var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+    var headerKeys = ['cal.sun','cal.mon','cal.tue','cal.wed','cal.thu','cal.fri','cal.sat'];
+    var html = headerKeys.map(function(k) { return '<div class="cal-header">' + t(k) + '</div>'; }).join('');
+
+    for (var i = 0; i < firstDay; i++) {
+      html += '<div class="cal-day cal-day-empty"></div>';
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      var dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      var isToday = dateStr === todayStr;
+      var dayEvents = calEvents.filter(function(e) { return e.date === dateStr; });
+
+      html += '<div class="cal-day' + (isToday ? ' cal-day-today' : '') + '">';
+      html += '<span class="cal-day-num">' + d + '</span>';
+      for (var j = 0; j < dayEvents.length; j++) {
+        var ev = dayEvents[j];
+        var tagClass = ev.tag ? ' tag-' + ev.tag : '';
+        html += '<div class="cal-event' + tagClass + '" data-id="' + ev.id + '">';
+        if (ev.time) html += '<span class="cal-event-time">' + ev.time + '</span> ';
+        html += ev.title;
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    document.getElementById('cal-grid').innerHTML = html;
+
+    document.querySelectorAll('.cal-event').forEach(function(el) {
+      el.style.cursor = 'pointer';
+      el.onclick = function() {
+        var id = this.getAttribute('data-id');
+        var ev = calEvents.find(function(e) { return e.id === id; });
+        if (!ev) return;
+        if (calToken) {
+          openModal(ev);
+        } else {
+          openDetail(ev);
+        }
+      };
+    });
+  }
+
+  async function doLogin() {
+    var pass = document.getElementById('login-pass').value;
+    if (!pass) return;
+    try {
+      var res = await fetch(WORKER_URL + '/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      });
+      var data = await res.json();
+      if (data.token) {
+        calToken = data.token;
+        sessionStorage.setItem('admin_token', calToken);
+        updateAdminUI();
+        renderCalendar();
+      } else { alert(t('live.admin.alert.wrong_pass')); }
+    } catch(e) { alert(t('live.admin.alert.login_fail')); }
+  }
+
+  function doLogout() {
+    calToken = null;
+    sessionStorage.removeItem('admin_token');
+    updateAdminUI();
+    renderCalendar();
+  }
+
+  function updateAdminUI() {
+    document.getElementById('admin-area').style.display = calToken ? 'block' : 'none';
+    document.getElementById('login-area').style.display = (!calToken && isAdminMode) ? 'block' : 'none';
+  }
+
+  function openModal(ev) {
+    editingId = ev ? ev.id : null;
+    document.getElementById('modal-title').textContent = ev ? t('live.admin.edit') : t('live.admin.add');
+    document.getElementById('evt-date').value = ev ? ev.date : '';
+    document.getElementById('evt-time').value = ev ? ev.time : '';
+    document.getElementById('evt-title').value = ev ? ev.title : '';
+    document.getElementById('evt-url').value = ev && ev.url ? ev.url : '';
+    document.getElementById('evt-tag').value = ev ? ev.tag : '';
+    document.getElementById('evt-memo').value = ev && ev.memo ? ev.memo : '';
+    document.getElementById('delete-btn').style.display = ev ? 'inline-flex' : 'none';
+
+    // コラボ相手
+    var collabArea = document.getElementById('collab-area');
+    var collabList = document.getElementById('collab-list');
+    collabList.innerHTML = '';
+    var tag = ev ? ev.tag : '';
+    if (tag === 'よぜらじ配信') {
+      collabArea.style.display = 'block';
+      if (ev && ev.collabs) {
+        ev.collabs.filter(function(c) { return c.name !== '柚月夜霄'; }).forEach(function(c) { addCollabRow(null, c.name, c.x); });
+      }
+    } else if (tag === 'コラボ配信' && ev && ev.collabs) {
+      collabArea.style.display = 'block';
+      ev.collabs.forEach(function(c) { addCollabRow(null, c.name, c.x); });
+    } else {
+      collabArea.style.display = tag === 'コラボ配信' ? 'block' : 'none';
+    }
+
+    document.getElementById('modal').style.display = 'flex';
+
+    // 新規追加時のみ: 日付変更でYouTube予約配信を自動入力
+    if (!ev) {
+      document.getElementById('evt-date').onchange = function() {
+        var match = findYtStreamByDate(this.value);
+        if (match) {
+          document.getElementById('evt-title').value = match.title;
+          document.getElementById('evt-time').value = match.time;
+          if (match.url) document.getElementById('evt-url').value = match.url;
+        }
+      };
+    }
+  }
+
+  function addCollabRow(e, name, x) {
+    var list = document.getElementById('collab-list');
+    var row = document.createElement('div');
+    row.className = 'collab-row';
+    row.innerHTML = '<input type="text" class="admin-input collab-name" placeholder="' + t('live.admin.collab_name') + '" value="' + (name || '') + '">' +
+      '<input type="text" class="admin-input collab-x" placeholder="' + t('live.admin.collab_url') + '" value="' + (x || '') + '">' +
+      '<button type="button" class="collab-remove">&times;</button>';
+    row.querySelector('.collab-remove').onclick = function() { row.remove(); };
+    list.appendChild(row);
+  }
+
+  function addFixedCollabRow(name, x) {
+    var list = document.getElementById('collab-list');
+    var row = document.createElement('div');
+    row.className = 'collab-row collab-fixed';
+    row.innerHTML = '<input type="text" class="admin-input collab-name" value="' + name + '" readonly style="opacity:.6">' +
+      '<input type="text" class="admin-input collab-x" value="' + x + '" readonly style="opacity:.6">';
+    list.appendChild(row);
+  }
+
+  function getCollabs() {
+    var rows = document.querySelectorAll('.collab-row');
+    var collabs = [];
+    rows.forEach(function(row) {
+      var name = row.querySelector('.collab-name').value.trim();
+      var x = row.querySelector('.collab-x').value.trim();
+      if (name) collabs.push({ name: name, x: x });
+    });
+    return collabs;
+  }
+
+  // 詳細ポップアップ（一般ユーザー用）
+  function openDetail(ev) {
+    // サムネイル
+    var thumbEl = document.getElementById('detail-thumb');
+    var videoId = extractVideoId(ev.url);
+    if (videoId) {
+      thumbEl.innerHTML = '<img src="https://i.ytimg.com/vi/' + videoId + '/mqdefault.jpg" alt="">';
+    } else {
+      thumbEl.innerHTML = '<div class="detail-thumb-empty">No Image</div>';
+    }
+
+    // 情報
+    document.getElementById('detail-title').textContent = ev.title;
+    var d = new Date(ev.date);
+    var dateText = (d.getMonth() + 1) + '/' + d.getDate() + (ev.time ? ' ' + ev.time : '');
+    document.getElementById('detail-date').textContent = dateText;
+
+    var tagEl = document.getElementById('detail-tag');
+    if (ev.tag) { tagEl.textContent = ev.tag; tagEl.style.display = 'inline-block'; }
+    else { tagEl.style.display = 'none'; }
+
+    var memoEl = document.getElementById('detail-memo');
+    if (ev.memo) { memoEl.textContent = ev.memo; memoEl.style.display = 'block'; }
+    else { memoEl.style.display = 'none'; }
+
+    var urlEl = document.getElementById('detail-url');
+    if (ev.url) { urlEl.href = ev.url; urlEl.style.display = 'inline-flex'; }
+    else { urlEl.style.display = 'none'; }
+
+    // コラボ相手・相方
+    var collabsEl = document.getElementById('detail-collabs');
+    if (ev.collabs && ev.collabs.length > 0) {
+      var isYozeraji = ev.tag === 'よぜらじ配信';
+      var partner = isYozeraji ? ev.collabs.filter(function(c) { return c.name === '柚月夜霄'; }) : [];
+      var guests = isYozeraji ? ev.collabs.filter(function(c) { return c.name !== '柚月夜霄'; }) : ev.collabs;
+      var html = '';
+      if (partner.length > 0) {
+        html += '<p style="font-size:.8rem;font-weight:700;color:var(--text-dim);margin-bottom:.4rem">' + t('live.detail.partner') + '</p>' +
+          partner.map(function(c) {
+            var link = c.x ? '<a href="' + c.x + '" target="_blank">' + c.x + '</a>' : '';
+            return '<div class="detail-collab"><span class="detail-collab-name">' + c.name + '</span>' + link + '</div>';
+          }).join('');
+      }
+      if (guests.length > 0) {
+        html += '<p style="font-size:.8rem;font-weight:700;color:var(--text-dim);margin-bottom:.4rem">' + (isYozeraji ? t('live.detail.guest') : t('live.detail.collab_partner')) + '</p>' +
+          guests.map(function(c) {
+            var link = c.x ? '<a href="' + c.x + '" target="_blank">' + c.x + '</a>' : '';
+            return '<div class="detail-collab"><span class="detail-collab-name">' + c.name + '</span>' + link + '</div>';
+          }).join('');
+      }
+      collabsEl.innerHTML = html;
+    } else {
+      collabsEl.innerHTML = '';
+    }
+
+    document.getElementById('detail-modal').style.display = 'flex';
+  }
+
+  function extractVideoId(url) {
+    if (!url) return null;
+    var m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/) || url.match(/\/live\/([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    editingId = null;
+  }
+
+  async function saveEvent() {
+    var date = document.getElementById('evt-date').value;
+    var time = document.getElementById('evt-time').value;
+    var title = document.getElementById('evt-title').value;
+    var evtUrl = document.getElementById('evt-url').value;
+    var tag = document.getElementById('evt-tag').value;
+    var memo = document.getElementById('evt-memo').value;
+    if (!date || !title) { alert(t('live.admin.alert.date_title_required')); return; }
+    if (!tag) { alert(t('live.admin.alert.tag_required')); return; }
+
+    // URLが空ならまずキャッシュから、なければYouTube検索
+    if (!evtUrl && title) {
+      // 1. 予約配信キャッシュから日付でマッチ
+      var ytMatch = findYtStreamByDate(date);
+      if (ytMatch && ytMatch.url) {
+        evtUrl = ytMatch.url;
+        document.getElementById('evt-url').value = evtUrl;
+      }
+      // 2. キャッシュになければYouTube検索
+      if (!evtUrl) {
+        try {
+          var searchQ = title.split(/[\/|]/)[0].replace(/[^\w\s\u3000-\u9FFF\u30A0-\u30FF\u3040-\u309F]/g, ' ').trim().slice(0, 50);
+          var searchRes = await ytApi('search', {
+            part: 'snippet', channelId: CHANNEL_ID, q: searchQ || title, type: 'video', maxResults: 1
+          });
+          if (searchRes.ok) {
+            var searchData = await searchRes.json();
+            if (searchData.items && searchData.items.length > 0) {
+              evtUrl = 'https://www.youtube.com/watch?v=' + searchData.items[0].id.videoId;
+              document.getElementById('evt-url').value = evtUrl;
+            }
+          }
+        } catch(e) {}
+      }
+    }
+
+    var url = WORKER_URL + '/schedule' + (editingId ? '/' + editingId : '');
+    var method = editingId ? 'PUT' : 'POST';
+    var body = { date: date, time: time, title: title, url: evtUrl, tag: tag, memo: memo };
+    if (tag === 'コラボ配信') body.collabs = getCollabs();
+    if (tag === 'よぜらじ配信') {
+      var collabs = getCollabs();
+      collabs.unshift({ name: '柚月夜霄', x: 'https://x.com/yuzuki_yoru' });
+      body.collabs = collabs;
+    }
+    if (editingId) body.originalMonth = calYear + '-' + String(calMonth + 1).padStart(2, '0');
+
+    try {
+      var res = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + calToken },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) { closeModal(); loadMonth(); }
+      else { var err = await res.json(); alert(err.error || t('live.admin.alert.save_fail')); }
+    } catch(e) { alert(t('live.admin.alert.save_fail')); }
+  }
+
+  function showDeleteConfirm() {
+    if (!editingId) return;
+    var title = document.getElementById('evt-title').value;
+    var date = document.getElementById('evt-date').value;
+    var time = document.getElementById('evt-time').value;
+    document.getElementById('delete-confirm-title').textContent = title;
+    document.getElementById('delete-confirm-date').textContent = date + (time ? ' ' + time : '');
+    document.getElementById('delete-modal').style.display = 'flex';
+  }
+
+  async function deleteEvent() {
+    if (!editingId) return;
+    document.getElementById('delete-modal').style.display = 'none';
+    var month = calYear + '-' + String(calMonth + 1).padStart(2, '0');
+    try {
+      var res = await fetch(WORKER_URL + '/schedule/' + editingId + '?month=' + month, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + calToken }
+      });
+      if (res.ok) { closeModal(); loadMonth(); }
+    } catch(e) { alert(t('live.admin.alert.delete_fail')); }
+  }
+
+  // ===== YouTube→スケジュール自動同期 =====
+  async function syncScheduleWithYouTube() {
+    if (ytUpcomingCache.length === 0 || calEvents.length === 0) return;
+    var updated = false;
+
+    for (var i = 0; i < calEvents.length; i++) {
+      var ev = calEvents[i];
+      if (!ev.url) continue;
+      var videoId = extractVideoId(ev.url);
+      if (!videoId) continue;
+
+      var match = ytUpcomingCache.find(function(yt) {
+        return yt.url && extractVideoId(yt.url) === videoId;
+      });
+      if (!match) continue;
+      if (match.time === ev.time && match.title === ev.title) continue;
+
+      try {
+        var body = {
+          date: ev.date, time: match.time, title: match.title,
+          url: ev.url, tag: ev.tag || '', memo: ev.memo || '',
+          originalMonth: ev.date.slice(0, 7)
+        };
+        if (ev.collabs) body.collabs = ev.collabs;
+        await fetch(WORKER_URL + '/schedule/' + ev.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + calToken },
+          body: JSON.stringify(body)
+        });
+        updated = true;
+      } catch(e) {}
+    }
+
+    if (updated) loadMonth();
+  }
+
+  // ===== 初期化 =====
+  async function init() {
+    await fetchLive();
+    var upcomingDone = fetchUpcoming();
+    fetchRecommend();
+    initSchedule();
+
+    // 管理者ログイン時: YouTube予約配信とスケジュールを自動同期
+    if (calToken) {
+      await upcomingDone;
+      syncScheduleWithYouTube();
+    }
+
+    setInterval(function() {
+      fetchLive().then(fetchUpcoming);
+    }, 1200000); // 20分
+  }
+
+  init();
+
+  // ===== Scroll Animations =====
+  var animObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(function(el) {
+    animObserver.observe(el);
+  });
+  var backToTop = document.getElementById('back-to-top');
+  var scrollProgress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 10);
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = percent + '%';
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Page Transition =====
+  document.querySelectorAll('a[href^="/"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var href = this.getAttribute('href');
+      if (href === window.location.pathname) return;
+      e.preventDefault();
+      var overlay = document.getElementById('page-transition');
+      overlay.classList.add('active');
+      setTimeout(function() { window.location.href = href; }, 300);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>是乃公式サイト - Fan Art</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- OGP -->
+  <meta property="og:title" content="Fan Art">
+  <meta property="og:description" content="#是絵乃の展覧会 ファンアートギャラリー">
+  <meta property="og:url" content="https://xenotadano.com/fanart">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Xeno Official">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Fan Art">
+  <meta name="twitter:description" content="#是絵乃の展覧会 ファンアートギャラリー">
+  <meta name="theme-color" content="#ff6a00">
+  <link rel="stylesheet" href="../css/style.css?v=20260331b">
+</head>
+<body>
+<div class="page-transition" id="page-transition"></div>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="/" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/link">Link</a></li>
+      <li><a href="/live">Live</a></li>
+      <li><a href="/fanart" class="active">Fan Art</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Fan Art Page ===== -->
+<section class="fanart-page">
+  <h1 class="page-title fade-in">Fan Art</h1>
+  <p class="page-subtitle fade-in">#是絵乃の展覧会</p>
+
+  <div class="fanart-post-wrap fade-in">
+    <a href="https://x.com/intent/tweet?hashtags=%E6%98%AF%E7%B5%B5%E4%B9%83%E3%81%AE%E5%B1%95%E8%A6%A7%E4%BC%9A" target="_blank" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      <span data-i18n="fanart.post_btn">ファンアートを投稿する</span>
+    </a>
+  </div>
+
+  <!-- Admin panel (hidden by default) -->
+  <div id="admin-section" style="display:none;">
+    <div class="admin-login" id="admin-login">
+      <form id="login-form" onsubmit="return doLogin(event)">
+        <input type="password" class="admin-input" id="admin-pass" placeholder="パスワード" style="max-width:240px;" data-i18n-placeholder="fanart.admin.password">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+
+    <div id="admin-tools" style="display:none;">
+      <div class="section-divider" style="margin: 2rem 0;"></div>
+      <h2 class="fanart-admin-title" data-i18n="fanart.admin.title">Admin Panel</h2>
+
+      <div class="fanart-admin-search-btn">
+        <button class="btn btn-outline" onclick="window.open('https://x.com/search?q=%23%E6%98%AF%E7%B5%B5%E4%B9%83%E3%81%AE%E5%B1%95%E8%A6%A7%E4%BC%9A&f=live', 'xsearch', 'width=500,height=750')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span data-i18n="fanart.admin.search">#是絵乃の展覧会 を検索（別ウィンドウ）</span>
+        </button>
+      </div>
+
+      <div class="fanart-admin-add">
+        <label class="modal-label" data-i18n="fanart.admin.paste_url">ツイートURLを貼り付け</label>
+        <div style="display:flex; gap:0.5rem;">
+          <input type="text" class="admin-input" id="fanart-url" placeholder="https://x.com/user/status/...">
+          <button class="btn btn-primary" onclick="addFanart()" id="add-btn" data-i18n="fanart.admin.add">追加</button>
+        </div>
+        <p class="fanart-admin-hint" id="add-status"></p>
+      </div>
+
+      <!-- Pending list -->
+      <div class="fanart-pending-section">
+        <h3 class="fanart-pending-title"><span data-i18n="fanart.admin.pending">承認待ち</span> (<span id="pending-count">0</span>)</h3>
+        <div id="pending-list" class="fanart-pending-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notice -->
+  <div class="fanart-notice fade-in">
+    <h3 class="fanart-notice-title" data-i18n="fanart.notice.title">ファンアートの取り扱いについて</h3>
+    <ul class="fanart-notice-list">
+      <li data-i18n-html="fanart.notice.1"><strong>#是絵乃の展覧会</strong> で投稿されたイラストは、本サイトに掲載させていただく場合があります</li>
+      <li data-i18n="fanart.notice.2">掲載時は投稿者名・リンクを表記します</li>
+      <li data-i18n="fanart.notice.3">サムネイルやアイコンに使用させていただくことがあります</li>
+      <li data-i18n="fanart.notice.4">加工が必要な場合はDMにて許可を頂いてから使用します</li>
+      <li data-i18n="fanart.notice.5">アカウント消失等で連絡が取れない場合は、加工せずそのまま使用します</li>
+      <li data-i18n="fanart.notice.6">掲載の取り下げはDMにてご連絡ください</li>
+    </ul>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- Gallery -->
+  <div class="fanart-gallery" id="fanart-gallery"></div>
+  <p class="fanart-empty fade-in" id="fanart-empty" style="display:none;" data-i18n="fanart.empty">まだファンアートがありません</p>
+</section>
+
+<!-- ===== Lightbox ===== -->
+<div class="fanart-lightbox" id="lightbox" style="display:none;" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Fan Art" draggable="false">
+  <div class="lightbox-info" id="lightbox-info"></div>
+</div>
+
+<!-- ===== Reject confirm modal ===== -->
+<div class="modal-overlay" id="reject-modal" style="display:none;">
+  <div class="modal-content">
+    <h3 class="modal-title" data-i18n="fanart.admin.reject_title">却下確認</h3>
+    <p data-i18n="fanart.admin.reject_msg">このファンアートを却下しますか？</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeRejectModal()" data-i18n="fanart.admin.cancel">キャンセル</button>
+      <button class="btn btn-danger" id="reject-confirm-btn" data-i18n="fanart.admin.reject_btn">却下する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Delete confirm modal ===== -->
+<div class="modal-overlay" id="delete-modal" style="display:none;">
+  <div class="modal-content">
+    <h3 class="modal-title" data-i18n="fanart.admin.delete_title">削除確認</h3>
+    <p data-i18n="fanart.admin.delete_msg">この承認済みファンアートを削除しますか？</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDeleteModal()" data-i18n="fanart.admin.cancel">キャンセル</button>
+      <button class="btn btn-danger" id="delete-confirm-btn" data-i18n="fanart.admin.delete_btn">削除する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Back to Top & Scroll Progress ===== -->
+<button class="back-to-top" id="back-to-top" aria-label="トップに戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p data-i18n="footer.copyright">&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+<!-- ===== Scripts ===== -->
+<script src="/js/i18n.js"></script>
+<script>
+  // ===== Config =====
+  var WORKER_URL = 'https://youtube-proxy.xenolike1263.workers.dev';
+  var adminToken = '';
+
+  // ===== Image protection =====
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('.protected-image')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  // ===== Show admin section if ?admin =====
+  if (location.search.includes('admin')) {
+    document.getElementById('admin-section').style.display = 'block';
+  }
+
+  // ===== Auth =====
+  async function doLogin(e) {
+    e.preventDefault();
+    var pass = document.getElementById('admin-pass').value;
+    try {
+      var res = await fetch(WORKER_URL + '/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass }),
+      });
+      var data = await res.json();
+      if (data.token) {
+        adminToken = data.token;
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-tools').style.display = 'block';
+        loadPending();
+        loadGallery();
+      } else {
+        alert(t('fanart.admin.alert.wrong_pass'));
+      }
+    } catch (err) {
+      alert(t('fanart.admin.alert.login_fail'));
+    }
+  }
+
+  // ===== Load approved gallery =====
+  async function loadGallery() {
+    try {
+      var res = await fetch(WORKER_URL + '/fanart');
+      var items = await res.json();
+      var grid = document.getElementById('fanart-gallery');
+      var empty = document.getElementById('fanart-empty');
+
+      if (!items || items.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      grid.innerHTML = items.map(function(item) {
+        // 最初の画像をメインとして表示
+        var imgUrl = item.images[0];
+        return '<div class="fanart-card fade-in">' +
+          '<div class="fanart-image protected-image" onclick="openLightbox(\'' + encodeURIComponent(JSON.stringify(item)) + '\')">' +
+            '<img src="' + imgUrl + '" alt="Fan Art by @' + item.authorHandle + '" draggable="false" loading="lazy">' +
+            '<div class="image-shield"></div>' +
+            (item.images.length > 1 ? '<span class="fanart-multi">' + item.images.length + '</span>' : '') +
+          '</div>' +
+          '<div class="fanart-info">' +
+            '<img src="' + item.authorAvatar + '" class="fanart-avatar" alt="" draggable="false">' +
+            '<div class="fanart-author-wrap">' +
+              '<span class="fanart-author">' + escapeHtml(item.authorName) + '</span>' +
+              '<a href="https://x.com/' + item.authorHandle + '" target="_blank" class="fanart-handle">@' + item.authorHandle + '</a>' +
+            '</div>' +
+            '<a href="' + item.tweetUrl + '" target="_blank" class="fanart-tweet-link" title="' + t('fanart.view_post') + '">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' +
+            '</a>' +
+          '</div>' +
+          (adminToken ? '<div class="fanart-admin-bar"><button class="btn btn-danger fanart-delete-btn" onclick="openDeleteModal(\'' + item.id + '\')">' + t('fanart.admin.delete_btn') + '</button></div>' : '') +
+        '</div>';
+      }).join('');
+
+      // Observe for scroll animation
+      document.querySelectorAll('.fanart-card.fade-in').forEach(function(el) {
+        observer.observe(el);
+      });
+    } catch (e) {
+      console.error('Gallery load error:', e);
+    }
+  }
+
+  // ===== Load pending (admin) =====
+  async function loadPending() {
+    try {
+      var res = await fetch(WORKER_URL + '/fanart/pending', {
+        headers: { 'Authorization': 'Bearer ' + adminToken },
+      });
+      var items = await res.json();
+      document.getElementById('pending-count').textContent = items.length;
+      var list = document.getElementById('pending-list');
+
+      if (!items || items.length === 0) {
+        list.innerHTML = '<p class="fanart-pending-empty">' + t('fanart.admin.pending_empty') + '</p>';
+        return;
+      }
+
+      list.innerHTML = items.map(function(item) {
+        return '<div class="fanart-pending-card" id="pending-' + item.id + '">' +
+          '<div class="fanart-pending-images">' +
+            item.images.map(function(img) {
+              return '<img src="' + img + '" alt="" draggable="false" loading="lazy">';
+            }).join('') +
+          '</div>' +
+          '<div class="fanart-pending-info">' +
+            '<div class="fanart-pending-author">' +
+              '<img src="' + item.authorAvatar + '" class="fanart-avatar" alt="">' +
+              '<div>' +
+                '<strong>' + escapeHtml(item.authorName) + '</strong>' +
+                '<span class="fanart-handle">@' + item.authorHandle + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<p class="fanart-pending-text">' + escapeHtml(item.text).substring(0, 100) + '</p>' +
+            '<a href="' + item.tweetUrl + '" target="_blank" class="fanart-pending-link">' + t('fanart.admin.verify_post') + '</a>' +
+          '</div>' +
+          '<div class="fanart-pending-actions">' +
+            '<button class="btn btn-primary" onclick="approveFanart(\'' + item.id + '\')">' + t('fanart.admin.approve') + '</button>' +
+            '<button class="btn btn-danger" onclick="openRejectModal(\'' + item.id + '\')">' + t('fanart.admin.reject') + '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    } catch (e) {
+      console.error('Pending load error:', e);
+    }
+  }
+
+  // ===== Add fanart =====
+  async function addFanart() {
+    var urlInput = document.getElementById('fanart-url');
+    var status = document.getElementById('add-status');
+    var btn = document.getElementById('add-btn');
+    var url = urlInput.value.trim();
+
+    if (!url) return;
+    if (!/(?:twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url)) {
+      status.textContent = t('fanart.admin.alert.invalid_url');
+      status.style.color = '#e53935';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = t('fanart.admin.fetching');
+    status.textContent = '';
+
+    try {
+      var res = await fetch(WORKER_URL + '/fanart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + adminToken,
+        },
+        body: JSON.stringify({ url: url }),
+      });
+      var data = await res.json();
+
+      if (res.ok) {
+        status.textContent = t('fanart.admin.alert.added');
+        status.style.color = '#43a047';
+        urlInput.value = '';
+        loadPending();
+      } else {
+        status.textContent = data.error || t('fanart.admin.alert.error');
+        status.style.color = '#e53935';
+      }
+    } catch (e) {
+      status.textContent = t('fanart.admin.alert.comm_error');
+      status.style.color = '#e53935';
+    }
+
+    btn.disabled = false;
+    btn.textContent = t('fanart.admin.add');
+  }
+
+  // ===== Approve =====
+  async function approveFanart(id) {
+    try {
+      var res = await fetch(WORKER_URL + '/fanart/' + id + '/approve', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + adminToken },
+      });
+      if (res.ok) {
+        loadPending();
+        loadGallery();
+      } else {
+        var data = await res.json();
+        alert(data.error || t('fanart.admin.alert.error'));
+      }
+    } catch (e) {
+      alert(t('fanart.admin.alert.comm_error'));
+    }
+  }
+
+  // ===== Reject =====
+  var rejectTargetId = '';
+
+  function openRejectModal(id) {
+    rejectTargetId = id;
+    document.getElementById('reject-modal').style.display = 'flex';
+  }
+
+  function closeRejectModal() {
+    rejectTargetId = '';
+    document.getElementById('reject-modal').style.display = 'none';
+  }
+
+  document.getElementById('reject-confirm-btn').addEventListener('click', async function() {
+    if (!rejectTargetId) return;
+    try {
+      var res = await fetch(WORKER_URL + '/fanart/' + rejectTargetId + '/reject', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + adminToken },
+      });
+      if (res.ok) {
+        closeRejectModal();
+        loadPending();
+      } else {
+        var data = await res.json();
+        alert(data.error || t('fanart.admin.alert.error'));
+      }
+    } catch (e) {
+      alert(t('fanart.admin.alert.comm_error'));
+    }
+  });
+
+  // ===== Delete approved =====
+  var deleteTargetId = '';
+
+  function openDeleteModal(id) {
+    deleteTargetId = id;
+    document.getElementById('delete-modal').style.display = 'flex';
+  }
+
+  function closeDeleteModal() {
+    deleteTargetId = '';
+    document.getElementById('delete-modal').style.display = 'none';
+  }
+
+  document.getElementById('delete-confirm-btn').addEventListener('click', async function() {
+    if (!deleteTargetId) return;
+    try {
+      var res = await fetch(WORKER_URL + '/fanart/' + deleteTargetId + '/delete', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + adminToken },
+      });
+      if (res.ok) {
+        closeDeleteModal();
+        loadGallery();
+      } else {
+        var data = await res.json();
+        alert(data.error || t('fanart.admin.alert.error'));
+      }
+    } catch (e) {
+      alert(t('fanart.admin.alert.comm_error'));
+    }
+  });
+
+  // ===== Lightbox =====
+  var lightboxImages = [];
+  var lightboxIndex = 0;
+
+  function openLightbox(encodedItem) {
+    var item = JSON.parse(decodeURIComponent(encodedItem));
+    lightboxImages = item.images;
+    lightboxIndex = 0;
+    showLightboxImage(item);
+    document.getElementById('lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showLightboxImage(item) {
+    document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
+    var info = document.getElementById('lightbox-info');
+    info.innerHTML = '<span>' + escapeHtml(item.authorName) + ' @' + item.authorHandle + '</span>' +
+      '<a href="' + item.tweetUrl + '" target="_blank">' + t('fanart.view_post') + '</a>';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // ===== Utility =====
+  function escapeHtml(text) {
+    var d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+  }
+
+  // ===== Scroll Animations =====
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ===== Header shadow + Back to Top + Scroll Progress =====
+  var backToTop = document.getElementById('back-to-top');
+  var scrollProgress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 10);
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = percent + '%';
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Page Transition =====
+  document.querySelectorAll('a[href^="/"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var href = this.getAttribute('href');
+      if (href === window.location.pathname) return;
+      e.preventDefault();
+      var overlay = document.getElementById('page-transition');
+      overlay.classList.add('active');
+      setTimeout(function() { window.location.href = href; }, 300);
+    });
+  });
+
+  // ===== URL入力でEnterキー対応 =====
+  document.getElementById('fanart-url').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addFanart(); }
+  });
+
+  // ===== Init =====
+  loadGallery();
+</script>
+
+</body>
+</html>

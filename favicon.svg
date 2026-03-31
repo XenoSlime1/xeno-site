@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 3D_2 Layered Paper Style (Modern 3D) -->
+  <g transform="translate(256, 256) rotate(-5)">
+    <!-- Backest Shadow -->
+    <path d="M100,-150 L220,50 L0,250 L-220,50 L-100,-150 Z" fill="#0c141f" />
+    
+    <!-- Middle Plate (White trim) -->
+    <path d="M90,-130 L200,50 L0,230 L-200,50 L-90,-130 Z" fill="#FFFFFF" />
+    
+    <!-- Top Plate (Main Orange) -->
+    <path d="M80,-110 L180,50 L0,210 L-180,50 L-80,-110 Z" fill="#ff9000" />
+    
+    <!-- Depth Shadow Layer (A semi-transparent dark plate) -->
+    <path d="M40,-50 L100,50 L0,150 L-100,50 L-40,-50 Z" fill="#000000" opacity="0.3" transform="translate(10, 15)" />
+    
+    <!-- The Void Eye (Looking left-down) -->
+    <path d="M30,-50 L90,50 L0,135 L-90,50 L-30,-50 Z" fill="#0c141f" />
+    <rect x="-60" y="80" width="30" height="30" fill="#FFFFFF" transform="rotate(45)" />
+  </g>
+</svg>

@@ -3,111 +3,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Battle Royale — XENO</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Synergy Battle Royale — XENO</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#ff6a00">
+  <link rel="stylesheet" href="css/style.css?v=20260331e">
 </head>
 <body>
+<div class="page-transition" id="page-transition"></div>
 
 <!-- ===== Header ===== -->
 <header>
   <nav>
-    <a href="index.html" class="nav-logo">XENO</a>
+    <a href="/" class="nav-logo">XENO</a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="battleroyale.html" class="active">Battle Royale</a></li>
+      <li><a href="/home">Home</a></li>
+      <li><a href="/link">Link</a></li>
+      <li><a href="/live">Live</a></li>
+      <li><a href="/fanart">Fan Art</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
     </ul>
   </nav>
 </header>
 
-<!-- ===== Page Hero ===== -->
-<div class="page-hero">
-  <h1>Synergy Battle Royale</h1>
-  <p>ロールを選べ。チームで生き残れ。</p>
-</div>
+<!-- ===== Hero ===== -->
+<section class="br-hero">
+  <h1 class="br-hero-title fade-in">Synergy Battle Royale</h1>
+  <p class="br-hero-sub fade-in" data-i18n="br.subtitle">ロールを選べ。チームで生き残れ。</p>
+</section>
 
-<!-- ===== Rules ===== -->
-<div class="rules-container">
+<div class="section-divider"></div>
 
-  <!-- 概要 -->
-  <div class="rule-block">
-    <h2>// 概要</h2>
-    <ul>
-      <li>Minecraft 1.21.1 で行うチーム制バトルロワイヤル</li>
-      <li>自作プラグイン「Synergy」によるオリジナルシステム</li>
-      <li>1チーム最大3人で構成</li>
-      <li>3つのロールから自分の役割を選んで戦う</li>
-    </ul>
-  </div>
-
-  <!-- ロール紹介 -->
-  <div class="rule-block">
-    <h2>// ロール</h2>
-    <p style="color: var(--text-dim); margin-bottom: 1rem;">各チーム Attacker×2 / Defender×2 / Supporter×1 の枠から選択</p>
-    <div class="role-grid">
-      <div class="role-card attacker">
-        <div class="role-name">ATTACKER</div>
-        <div class="role-slots">最大2枠</div>
-        <p>攻撃特化のロール。高い火力で敵チームを殲滅する。</p>
-      </div>
-      <div class="role-card defender">
-        <div class="role-name">DEFENDER</div>
-        <div class="role-slots">最大2枠</div>
-        <p>防御・耐久のロール。チームを守り、前線を維持する。</p>
-      </div>
-      <div class="role-card supporter">
-        <div class="role-name">SUPPORTER</div>
-        <div class="role-slots">最大1枠</div>
-        <p>支援特化のロール。回復やバフでチームを支える。</p>
-      </div>
+<!-- ===== 概要 ===== -->
+<section>
+  <h2 class="section-title fade-in">Overview</h2>
+  <div class="br-overview stagger">
+    <div class="br-overview-item fade-in">
+      <span class="br-overview-icon">&#9878;</span>
+      <p data-i18n="br.overview.1">Minecraft 1.21.1 で行うチーム制バトルロワイヤル</p>
+    </div>
+    <div class="br-overview-item fade-in">
+      <span class="br-overview-icon">&#9881;</span>
+      <p data-i18n="br.overview.2">自作プラグイン「Synergy」によるオリジナルシステム</p>
+    </div>
+    <div class="br-overview-item fade-in">
+      <span class="br-overview-icon">&#9733;</span>
+      <p data-i18n="br.overview.3">1チーム最大3人で構成</p>
+    </div>
+    <div class="br-overview-item fade-in">
+      <span class="br-overview-icon">&#9876;</span>
+      <p data-i18n="br.overview.4">3つのロールから自分の役割を選んで戦う</p>
     </div>
   </div>
+</section>
 
-  <!-- 基本ルール -->
-  <div class="rule-block">
-    <h2>// 基本ルール</h2>
-    <ul>
-      <li>チーム全員がデス → そのチームは敗退</li>
-      <li>最後まで生存したチームが勝利</li>
-      <li>蘇生システムあり（条件付き）</li>
-      <li>各ロール固有のスキル・武器を使用可能</li>
-      <li>装備はロールごとに固定（自由な装備変更不可）</li>
-    </ul>
-  </div>
+<div class="section-divider"></div>
 
-  <!-- 参加方法 -->
-  <div class="rule-block">
-    <h2>// 参加方法</h2>
-    <ul>
-      <li>Discordサーバー「是乃裁」に参加</li>
-      <li>企画告知チャンネルで開催情報をチェック</li>
-      <li>参加表明して当日サーバーに接続！</li>
-    </ul>
-    <div style="margin-top: 1.5rem;">
-      <a href="https://discord.gg/KbKVsb4vrr" target="_blank" class="btn btn-discord">Discordに参加する</a>
+<!-- ===== ロール ===== -->
+<section>
+  <h2 class="section-title fade-in">Roles</h2>
+  <p class="br-role-desc fade-in" data-i18n="br.roles.desc">各チーム Attacker×2 / Defender×2 / Supporter×1 の枠から選択</p>
+  <div class="br-role-grid stagger">
+    <div class="br-role-card fade-in" data-role="attacker">
+      <div class="br-role-header">
+        <span class="br-role-name">ATTACKER</span>
+        <span class="br-role-slots" data-i18n="br.attacker.slots">最大2枠</span>
+      </div>
+      <div class="br-role-accent"></div>
+      <p class="br-role-body" data-i18n="br.attacker.desc">攻撃特化のロール。高い火力で敵チームを殲滅する。</p>
+    </div>
+    <div class="br-role-card fade-in" data-role="defender">
+      <div class="br-role-header">
+        <span class="br-role-name">DEFENDER</span>
+        <span class="br-role-slots" data-i18n="br.defender.slots">最大2枠</span>
+      </div>
+      <div class="br-role-accent"></div>
+      <p class="br-role-body" data-i18n="br.defender.desc">防御・耐久のロール。チームを守り、前線を維持する。</p>
+    </div>
+    <div class="br-role-card fade-in" data-role="supporter">
+      <div class="br-role-header">
+        <span class="br-role-name">SUPPORTER</span>
+        <span class="br-role-slots" data-i18n="br.supporter.slots">最大1枠</span>
+      </div>
+      <div class="br-role-accent"></div>
+      <p class="br-role-body" data-i18n="br.supporter.desc">支援特化のロール。回復やバフでチームを支える。</p>
     </div>
   </div>
+</section>
 
-  <!-- 注意事項 -->
-  <div class="rule-block">
-    <h2>// 注意事項</h2>
-    <ul>
-      <li>チート・不正ツールの使用は即BAN</li>
-      <li>暴言・迷惑行為は禁止</li>
-      <li>ルールは随時更新される場合があります</li>
-      <li>不明点はDiscordで質問してください</li>
-    </ul>
+<div class="section-divider"></div>
+
+<!-- ===== 基本ルール ===== -->
+<section>
+  <h2 class="section-title fade-in">Rules</h2>
+  <div class="br-rules stagger">
+    <div class="br-rule fade-in">
+      <span class="br-rule-num">01</span>
+      <p data-i18n="br.rule.1">チーム全員がデス → そのチームは敗退</p>
+    </div>
+    <div class="br-rule fade-in">
+      <span class="br-rule-num">02</span>
+      <p data-i18n="br.rule.2">最後まで生存したチームが勝利</p>
+    </div>
+    <div class="br-rule fade-in">
+      <span class="br-rule-num">03</span>
+      <p data-i18n="br.rule.3">蘇生システムあり（条件付き）</p>
+    </div>
+    <div class="br-rule fade-in">
+      <span class="br-rule-num">04</span>
+      <p data-i18n="br.rule.4">各ロール固有のスキル・武器を使用可能</p>
+    </div>
+    <div class="br-rule fade-in">
+      <span class="br-rule-num">05</span>
+      <p data-i18n="br.rule.5">装備はロールごとに固定（自由な装備変更不可）</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 注意事項 ===== -->
+<section>
+  <h2 class="section-title fade-in">Notice</h2>
+
+  <!-- 【1】禁止行為 -->
+  <div class="br-notice-block fade-in" data-severity="prohibited">
+    <div class="br-notice-header">
+      <span class="br-notice-label">PROHIBITED</span>
+      <span class="br-notice-label-sub">禁止行為</span>
+    </div>
+    <div class="br-notice-accent"></div>
+    <ol class="br-notice-list">
+      <li>対戦相手への誹謗中傷や不快になる行為</li>
+      <li>ロゴは本バトロワのみ使用可能なため他での使用</li>
+      <li>本バトロワは該当するMODを用いての使用</li>
+      <li>不正なプレイ、敵同士の共闘に関与または援助</li>
+      <li>F3＋何かのデバッグキーを用いての使用も(4)の不正プレイとして見なされる</li>
+      <li>誤解を招く発言、行動</li>
+      <li>他者のプライバシーを侵害する行為、機器などのセキュリティを危険にさらす行為</li>
+      <li>意図的なチャットのスパムやコマンドやシステムの改変、使用</li>
+      <li>対戦中に本バトロワに参加されているプレイヤーの視点を見たり、助言を受ける行為</li>
+      <li>運営や技術者に向けて合理的に好ましくない発言、行動（憎悪、誹謗中傷、いじめ、ハラスメント）</li>
+      <li>IPアドレスを配信上に公開、発言または共有する行為</li>
+    </ol>
   </div>
 
-</div>
+  <!-- 【2】原則厳守 -->
+  <div class="br-notice-block fade-in" data-severity="mandatory">
+    <div class="br-notice-header">
+      <span class="br-notice-label">MANDATORY</span>
+      <span class="br-notice-label-sub">原則厳守</span>
+    </div>
+    <div class="br-notice-accent"></div>
+    <ol class="br-notice-list">
+      <li>禁止行為(3)に該当するMODについては別途記載の一覧を参照してください</li>
+      <li>禁止行為(9)の助言を受ける行為にはリスナーの伝書鳩も含まれます。配信時は概要欄や固定コメント、または試合開始前に視聴者へ周知をお願いします</li>
+      <li>禁止行為に該当する行為を目撃した場合は専用の報告フォームにご記入ください</li>
+    </ol>
+  </div>
+
+  <!-- 【3】運営に関すること -->
+  <div class="br-notice-block fade-in" data-severity="info">
+    <div class="br-notice-header">
+      <span class="br-notice-label">MANAGEMENT</span>
+      <span class="br-notice-label-sub">運営・スタッフに関すること</span>
+    </div>
+    <div class="br-notice-accent"></div>
+    <ol class="br-notice-list">
+      <li>トラブルが発生した場合は試合開始時間が遅れてしまう場合がございます</li>
+      <li>トラブル発生時に配信や録画を行っていない場合、証拠不十分により運営では対応しかねます</li>
+      <li>運営やスタッフは公平性と競技性を高めるために選手の不利益になる行為や試合に影響が出る行為は禁止</li>
+      <li>(3)の行為が万が一発生した場合には即座に試合を中断し、その後の試合も中止させていただく場合がございます</li>
+      <li>規約違反者やトラブルが発生した場合は必ず規約に基づき処置を行います</li>
+      <li>報告フォームで受け取った内容は外部に公開されることはなく、本バトロワの運営にのみ共有され、報告者は匿名として扱われます</li>
+    </ol>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== 参加方法 ===== -->
+<section>
+  <h2 class="section-title fade-in">How to Join</h2>
+  <div class="br-join fade-in">
+    <div class="br-join-steps">
+      <div class="br-join-step">
+        <span class="br-join-step-num">1</span>
+        <p data-i18n="br.join.1">Discordサーバー「是乃裁」に参加</p>
+      </div>
+      <div class="br-join-step">
+        <span class="br-join-step-num">2</span>
+        <p data-i18n="br.join.2">企画告知チャンネルで開催情報をチェック</p>
+      </div>
+      <div class="br-join-step">
+        <span class="br-join-step-num">3</span>
+        <p data-i18n="br.join.3">参加表明して当日サーバーに接続！</p>
+      </div>
+    </div>
+    <div class="br-join-action">
+      <a href="https://discord.gg/KbKVsb4vrr" target="_blank" class="btn btn-discord" data-i18n="br.join.btn">Discordに参加する</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Back to Top & Scroll Progress ===== -->
+<button class="back-to-top" id="back-to-top" aria-label="トップに戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="scroll-progress" id="scroll-progress"></div>
 
 <!-- ===== Footer ===== -->
 <footer>
-  <p><a href="index.html">&larr; トップに戻る</a></p>
-  <p>&copy; 2026 XENO. All rights reserved.</p>
+  <p data-i18n="footer.copyright">&copy; 2026 XENO. All rights reserved.</p>
 </footer>
+
+<script src="/js/i18n.js"></script>
+<script>
+  // ===== Scroll Animations =====
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ===== Header shadow + Back to Top + Scroll Progress =====
+  var backToTop = document.getElementById('back-to-top');
+  var scrollProgress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 10);
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = percent + '%';
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Page Transition =====
+  document.querySelectorAll('a[href^="/"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var href = this.getAttribute('href');
+      if (href === window.location.pathname) return;
+      e.preventDefault();
+      var overlay = document.getElementById('page-transition');
+      overlay.classList.add('active');
+      setTimeout(function() { window.location.href = href; }, 300);
+    });
+  });
+</script>
 
 </body>
 </html>
