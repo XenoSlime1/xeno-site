@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>是乃公式サイト - Projects</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- OGP -->
+  <meta property="og:title" content="Projects">
+  <meta property="og:description" content="是乃の企画一覧">
+  <meta property="og:url" content="https://xenotadano.com/projects">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Xeno Official">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Projects">
+  <meta name="twitter:description" content="是乃の企画一覧">
+  <meta name="theme-color" content="#ff6a00">
+  <link rel="stylesheet" href="../css/style.css?v=20260331c">
+</head>
+<body>
+<div class="page-transition" id="page-transition"></div>
+
+<!-- ===== Header ===== -->
+<header>
+  <nav>
+    <a href="/" class="nav-logo">XENO</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/link">Link</a></li>
+      <li><a href="/live">Live</a></li>
+      <li><a href="/fanart">Fan Art</a></li>
+      <li><a href="/projects" class="active">Projects</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ===== Projects Page ===== -->
+<section class="projects-page">
+  <h1 class="page-title fade-in">Projects</h1>
+  <p class="page-subtitle fade-in" data-i18n="projects.subtitle">是乃の企画一覧</p>
+
+  <div class="projects-grid stagger">
+    <!-- Synergy Battle Royale -->
+    <a href="/projects/synergy" class="project-card fade-in">
+      <div class="project-card-header" style="background: linear-gradient(135deg, var(--orange), #cc5500);">
+        <span class="project-card-tag">Minecraft</span>
+        <h3 class="project-card-title">Synergy</h3>
+        <p class="project-card-category">Battle Royale</p>
+      </div>
+      <div class="project-card-body">
+        <p data-i18n="projects.synergy.desc">ロールを選べ。チームで生き残れ。――3つの役職×チーム戦バトロワ企画</p>
+        <span class="project-card-link" data-i18n="projects.synergy.link">詳細を見る &rarr;</span>
+      </div>
+    </a>
+
+    <!-- 狐疑村 -->
+    <div class="project-card project-card-soon fade-in">
+      <div class="project-card-header" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+        <span class="project-card-tag">Minecraft</span>
+        <span class="project-card-badge">Coming Soon</span>
+        <h3 class="project-card-title">狐疑遊戯</h3>
+        <p class="project-card-category">人狼ゲーム</p>
+      </div>
+      <div class="project-card-body">
+        <p data-i18n="projects.kogiyugi.desc">疑え。暴け。生き延びろ。――狐と村人の心理戦</p>
+        <span class="project-card-link project-card-link-disabled" data-i18n="projects.kogiyugi.status">準備中…</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Back to Top & Scroll Progress ===== -->
+<button class="back-to-top" id="back-to-top" aria-label="トップに戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p data-i18n="footer.copyright">&copy; 2026 XENO. All rights reserved.</p>
+</footer>
+
+<script src="/js/i18n.js"></script>
+<script>
+  // ===== Scroll Animations =====
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ===== Header shadow + Back to Top + Scroll Progress =====
+  var backToTop = document.getElementById('back-to-top');
+  var scrollProgress = document.getElementById('scroll-progress');
+
+  window.addEventListener('scroll', function() {
+    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 10);
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var percent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    scrollProgress.style.width = percent + '%';
+  });
+
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ===== Page Transition =====
+  document.querySelectorAll('a[href^="/"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var href = this.getAttribute('href');
+      if (href === window.location.pathname) return;
+      e.preventDefault();
+      var overlay = document.getElementById('page-transition');
+      overlay.classList.add('active');
+      setTimeout(function() { window.location.href = href; }, 300);
+    });
+  });
+</script>
+
+</body>
+</html>

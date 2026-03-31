@@ -32,6 +32,7 @@
       <li><a href="/link">Link</a></li>
       <li><a href="/live" class="active">Live</a></li>
       <li><a href="/fanart">Fan Art</a></li>
+      <li><a href="/projects">Projects</a></li>
       <li><button id="lang-toggle" class="lang-toggle" onclick="setLang(getLang()==='ja'?'en':'ja')">EN</button></li>
     </ul>
   </nav>
@@ -48,7 +49,7 @@
       <span data-i18n="live.now">Now Streaming</span>
     </h2>
     <div id="live-now" class="live-content live-featured">
-      <p class="live-empty" data-i18n="live.now.empty">現在配信はありません</p>
+      <p class="live-empty loading-text" data-i18n="live.loading">読み込み中…</p>
     </div>
   </div>
 
@@ -56,7 +57,7 @@
   <div class="live-section fade-in">
     <h2 class="live-section-title" data-i18n="live.upcoming">Upcoming</h2>
     <div id="live-upcoming" class="live-content live-featured">
-      <p class="live-empty" data-i18n="live.upcoming.empty">予約配信はありません</p>
+      <p class="live-empty loading-text" data-i18n="live.loading">読み込み中…</p>
     </div>
   </div>
 
@@ -64,7 +65,7 @@
   <div class="live-section fade-in">
     <h2 class="live-section-title" data-i18n="live.recommend">Recommend</h2>
     <div id="live-recommend" class="video-row">
-      <p class="live-empty" data-i18n="live.recommend.empty">現在表示はされません</p>
+      <p class="live-empty loading-text" data-i18n="live.loading">読み込み中…</p>
     </div>
   </div>
 
@@ -81,6 +82,8 @@
 
     <!-- カレンダー -->
     <style>
+      .loading-text{animation:loadPulse 1.2s ease-in-out infinite;color:var(--text-dim)}
+      @keyframes loadPulse{0%,100%{opacity:.4}50%{opacity:1}}
       .cal-nav{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:2rem}
       .cal-nav-btn{background:none;border:2px solid var(--orange);color:var(--orange);width:36px;height:36px;border-radius:50%;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
       .cal-nav-btn:hover{background:var(--orange);color:#fff}
@@ -381,14 +384,10 @@
     } catch(e) { /* 失敗時は現在の表示を維持 */ }
   }
 
-  // おすすめ: playlistItems.list (1ユニット、KVキャッシュで消費最小)
+  // おすすめ: RSSフィード（APIユニット消費ゼロ、1時間キャッシュ）
   async function fetchRecommend() {
     try {
-      var res = await ytApi('playlistItems', {
-        part: 'snippet',
-        playlistId: UPLOADS_PLAYLIST,
-        maxResults: 20
-      });
+      var res = await fetch(WORKER_URL + '/rss');
       if (!res.ok) return;
       var data = await res.json();
       var container = document.getElementById('live-recommend');
@@ -400,7 +399,7 @@
         container.innerHTML = '<p class="live-empty">' + t('live.recommend.empty') + '</p>';
       }
     } catch(e) {
-      document.getElementById('live-recommend').innerHTML = '<p class="live-empty">現在表示はされません</p>';
+      document.getElementById('live-recommend').innerHTML = '<p class="live-empty">' + t('live.recommend.empty') + '</p>';
     }
   }
 
@@ -834,14 +833,18 @@
 
   // ===== 初期化 =====
   async function init() {
-    await fetchLive();
-    var upcomingDone = fetchUpcoming();
+    // 全部並列で開始（recommend・schedule はliveに依存しない）
+    var livePromise = fetchLive();
     fetchRecommend();
     initSchedule();
 
+    // upcoming は liveVideoIds のフィルタに使うので live 完了後に開始
+    await livePromise;
+    var upcomingPromise = fetchUpcoming();
+
     // 管理者ログイン時: YouTube予約配信とスケジュールを自動同期
     if (calToken) {
-      await upcomingDone;
+      await upcomingPromise;
       syncScheduleWithYouTube();
     }
 

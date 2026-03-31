@@ -143,6 +143,13 @@ var TRANSLATIONS = {
     'br.notice.3': 'Rules may be updated at any time',
     'br.notice.4': 'Ask questions on Discord',
 
+    // Projects
+    'projects.subtitle': 'Projects by XENO',
+    'projects.synergy.desc': 'Choose your role. Survive as a team. — A 3-role team battle royale event.',
+    'projects.synergy.link': 'View details \u2192',
+    'projects.kogiyugi.desc': 'Suspect. Expose. Survive. — A psychological battle between foxes and villagers.',
+    'projects.kogiyugi.status': 'Coming soon\u2026',
+
     // Calendar day headers
     'cal.sun': 'SUN', 'cal.mon': 'MON', 'cal.tue': 'TUE', 'cal.wed': 'WED',
     'cal.thu': 'THU', 'cal.fri': 'FRI', 'cal.sat': 'SAT'
@@ -278,6 +285,13 @@ var TRANSLATIONS = {
     'br.notice.2': '\u66b4\u8a00\u30fb\u8ff7\u60d1\u884c\u70ba\u306f\u7981\u6b62',
     'br.notice.3': '\u30eb\u30fc\u30eb\u306f\u968f\u6642\u66f4\u65b0\u3055\u308c\u308b\u5834\u5408\u304c\u3042\u308a\u307e\u3059',
     'br.notice.4': '\u4e0d\u660e\u70b9\u306fDiscord\u3067\u8cea\u554f\u3057\u3066\u304f\u3060\u3055\u3044',
+    // Projects
+    'projects.subtitle': '是乃の企画一覧',
+    'projects.synergy.desc': 'ロールを選べ。チームで生き残れ。――3つの役職×チーム戦バトロワ企画',
+    'projects.synergy.link': '詳細を見る \u2192',
+    'projects.kogiyugi.desc': '疑え。暴け。生き延びろ。――狐と村人の心理戦',
+    'projects.kogiyugi.status': '準備中…',
+
     'cal.sun': '\u65e5', 'cal.mon': '\u6708', 'cal.tue': '\u706b', 'cal.wed': '\u6c34',
     'cal.thu': '\u6728', 'cal.fri': '\u91d1', 'cal.sat': '\u571f'
   }
